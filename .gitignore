@@ -1,0 +1,18 @@
+# reproducible artifacts -- never committed
+results/
+*.log
+*.json
+!datasets/**/*.json
+pred*.png
+*.npz
+*.pth
+*.pt
+
+# environment / caches
+env.sh
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
