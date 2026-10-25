@@ -54,12 +54,17 @@ $DATA_ROOT/
 ├── LungSegmentation/
 │   ├── CXR_png/
 │   └── masks/
-└── iSAID/
-    ├── val/
-    │   ├── images/
-    │   └── semantic_png/
-    └── splits/
-        └── val/
+├── iSAID/
+│   ├── val/
+│   │   ├── images/
+│   │   └── semantic_png/
+│   └── splits/
+│       └── val/
+└── PerMIRS/
+    ├── 0/
+    ├── 4/
+    ├── 5/
+    └── ...
 ```
 
 ## Instructions
@@ -226,3 +231,33 @@ rm -rf *.zip iSAID_patches
 cd ..
 ```
 This should result in 6363 images (`val/images/`) and 6363 masks (`val/semantic_png/`).
+
+### 🎯 PerMIS
+
+Download the required BURST data and prepare the PerMIS dataset following
+[Where's Waldo](https://github.com/dvirsamuel/PDM) by running:
+
+```bash
+mkdir -p PerMIRS && cd PerMIRS
+
+# BURST data
+wget "https://motchallenge.net/data/3-TAO_TEST.zip"
+wget https://omnomnom.vision.rwth-aachen.de/data/BURST/annotations.zip
+
+unzip 3-TAO_TEST.zip
+unzip annotations.zip
+
+# PerMIS generation script
+git clone https://github.com/dvirsamuel/PDM.git
+
+cd PDM/PerMIRS
+sed -i 's|base_path = f"/PerMIRS/{i}"|base_path = f"../../{i}"|' permirs_gen_dataset.py
+PYTHONPATH=.:.. python permirs_gen_dataset.py --images_base_dir ../../frames --annotations_file ../../test/all_classes.json
+
+cd ../..
+rm -rf PDM *.zip test train val frames info
+cd ..
+```
+This should result in 216 folders, each containing 3 frames (`0.jpg`, `1.jpg`,
+`2.jpg`) and a `masks.npz.npy` file. Frame 0 is the support of two episodes
+whose queries are frames 1 and 2, giving 432 episodes in total.
