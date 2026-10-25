@@ -234,20 +234,32 @@ This should result in 6363 images (`val/images/`) and 6363 masks (`val/semantic_
 
 ### 🎯 PerMIS
 
-Download the required BURST data and prepare the PerMIS dataset following
-[Where's Waldo](https://github.com/dvirsamuel/PDM) by running:
+PerMIS is a subset of the BURST test split, which annotates TAO videos. The
+official TAO frame download (`motchallenge.net/tao_download.php`) is no longer
+available ([BURST-benchmark#14](https://github.com/Ali2500/BURST-benchmark/issues/14));
+the same TAO frames are distributed with
+[TAO-Amodal](https://huggingface.co/datasets/chengyenhsieh/TAO-Amodal) on
+Hugging Face (gated: accept the dataset conditions there first). The
+generation script of [Where's Waldo](https://github.com/dvirsamuel/PDM) then
+keeps only the PerMIS frames and masks:
 
 ```bash
 mkdir -p PerMIRS && cd PerMIRS
 
-# BURST data
-wget "https://motchallenge.net/data/3-TAO_TEST.zip"
+# BURST annotations (-> info/, train/, val/, test/all_classes.json)
 wget https://omnomnom.vision.rwth-aachen.de/data/BURST/annotations.zip
-
-unzip 3-TAO_TEST.zip
 unzip annotations.zip
 
-# PerMIS generation script
+# TAO test frames from TAO-Amodal (7 archives, ~190 GB)
+pip install -U huggingface_hub
+hf auth login
+HF_XET_HIGH_PERFORMANCE=1 hf download chengyenhsieh/TAO-Amodal --repo-type dataset \
+    --include "frames/test/*.zip" --local-dir TAO-Amodal
+for z in TAO-Amodal/frames/test/*.zip; do
+    unzip -q "$z" -d "frames/test/$(basename "$z" .zip)"   # -> frames/test/<source>/<video>/
+done
+
+# PerMIS generation script: copies the 3 frames + masks of each PerMIS video
 git clone https://github.com/dvirsamuel/PDM.git
 
 cd PDM/PerMIRS
@@ -255,7 +267,7 @@ sed -i 's|base_path = f"/PerMIRS/{i}"|base_path = f"../../{i}"|' permirs_gen_dat
 PYTHONPATH=.:.. python permirs_gen_dataset.py --images_base_dir ../../frames --annotations_file ../../test/all_classes.json
 
 cd ../..
-rm -rf PDM *.zip test train val frames info
+rm -rf PDM TAO-Amodal frames info train val test annotations.zip
 cd ..
 ```
 This should result in 216 folders, each containing 3 frames (`0.jpg`, `1.jpg`,
