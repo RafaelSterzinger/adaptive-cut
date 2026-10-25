@@ -14,6 +14,7 @@ from .lung import build as build_lung
 from .lvis import build as build_lvis
 from .paco_part import build as build_paco_part
 from .pascal_part import build as build_pascal_part
+from .permis import build as build_permis
 from .suim import build as build_suim
 
 _BUILDERS = {
@@ -25,15 +26,16 @@ _BUILDERS = {
     "isic": build_isic,
     "lung": build_lung,
     "suim": build_suim,
+    "permis": build_permis,
 }
 
 # number of folds per benchmark (the paper reports the mean over folds)
 FOLDS = {"coco": 4, "lvis": 10, "pascal_part": 4, "paco_part": 4,
-         "isaid": 3, "isic": 1, "lung": 1, "suim": 1}
+         "isaid": 3, "isic": 1, "lung": 1, "suim": 1, "permis": 1}
 
 # classes per benchmark, for the class-summed IoU meter
 NCLASS = {"coco": 80, "lvis": 1203, "paco_part": 448, "lung": 2,
-          "isaid": 15, "isic": 3, "suim": 7}
+          "isaid": 15, "isic": 3, "suim": 7, "permis": 1}
 
 
 def build_dataset(name: str, data_root: str, fold: int, shots: int):

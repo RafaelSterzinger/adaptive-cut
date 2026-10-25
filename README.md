@@ -18,21 +18,29 @@ into look-alike background; the adaptive cut stops at the object.*
 
 ## Main results
 
-Foreground mIoU on eight benchmarks (INSID3 protocol; all folds, all episodes,
-seed 1). Best in **bold**. All methods use a frozen DINOv3 ViT-L/16.
+Foreground mIoU on nine benchmarks (INSID3 protocol; all folds, all episodes,
+seed 1), as in the paper's Table 2. FSSDINO, INSID3, FROST and ours use a
+frozen DINOv3 ViT-L/16; best of these four in **bold**, second
+<ins>underlined</ins>. The SAM-based Matcher and GF-SAM (marked †) are not
+ranked. PerMIS is 1-shot only (one support frame per episode), so the 5-shot
+Avg is over eight benchmarks.
 
-| Method | LVIS-92<sup>i</sup> | COCO-20<sup>i</sup> | ISIC | SUIM | iSAID | X-Ray | PASCAL | PACO | Avg |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **1-shot** | | | | | | | | | |
-| FSSDINO | 33.8 | 51.3 | 53.0 | 52.5 | 47.2 | 76.7 | 50.3 | 35.3 | 50.0 |
-| INSID3 | 41.5 | 58.3 | 54.0 | 53.4 | 51.7 | 78.6 | 49.1 | 38.5 | 53.1 |
-| FROST | 32.3 | 48.1 | 54.4 | 58.1 | 49.1 | 84.8 | 54.3 | 36.9 | 52.3 |
-| **Ours** | **42.3** | **58.7** | **58.4** | **58.4** | **52.1** | **90.5** | **56.6** | **42.3** | **57.4** |
-| **5-shot** | | | | | | | | | |
-| FSSDINO | 43.4 | 60.6 | 63.6 | 62.8 | 58.5 | 78.7 | 60.8 | 45.8 | 59.2 |
-| INSID3 | 47.5 | 64.3 | 63.9 | 63.1 | 60.1 | 79.4 | 58.4 | 47.0 | 60.5 |
-| FROST | 47.5 | 61.8 | **66.7** | **67.2** | 61.0 | 86.4 | 68.0 | 51.3 | 63.7 |
-| **Ours** | **52.2** | **67.3** | 65.4 | 66.8 | **61.9** | **91.8** | **68.4** | **54.3** | **66.0** |
+| Method | LVIS-92<sup>i</sup> | COCO-20<sup>i</sup> | ISIC | SUIM | iSAID | X-Ray | PASCAL | PACO | PerMIS | Avg |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **1-shot** | | | | | | | | | | |
+| Matcher† | 33.0 | 52.7 | 38.6 | 44.1 | 33.3 | 70.8 | 42.9 | 34.7 | 63.8 | 46.0 |
+| GF-SAM† | 35.2 | 58.7 | 48.7 | 53.1 | 47.1 | 51.0 | 44.5 | 36.3 | 54.1 | 47.6 |
+| FSSDINO | 33.8 | 51.3 | 53.0 | 52.5 | 47.2 | 76.7 | 50.3 | 35.2 | 48.5 | 49.8 |
+| INSID3 | <ins>41.5</ins> | <ins>58.3</ins> | 54.0 | 53.4 | <ins>51.7</ins> | 78.6 | 49.1 | <ins>38.5</ins> | <ins>67.0</ins> | <ins>54.7</ins> |
+| FROST | 32.3 | 48.1 | <ins>54.4</ins> | <ins>58.1</ins> | 49.1 | <ins>84.8</ins> | <ins>54.3</ins> | 36.8 | 66.6 | 53.8 |
+| **Ours** | **42.3** | **58.7** | **58.4** | **58.4** | **52.1** | **90.5** | **56.6** | **42.3** | **67.8** | **58.6** |
+| **5-shot** | | | | | | | | | | |
+| Matcher† | 40.0 | 60.7 | 35.0 | 50.6 | 34.3 | 71.2 | 45.8 | 33.6 | -- | 46.4 |
+| GF-SAM† | 44.2 | 66.8 | 55.2 | 58.1 | 52.4 | 52.9 | 51.2 | 41.9 | -- | 52.8 |
+| FSSDINO | 43.4 | 60.6 | 63.6 | 62.8 | 58.5 | 78.6 | 60.8 | 45.8 | -- | 59.2 |
+| INSID3 | <ins>47.5</ins> | <ins>64.3</ins> | 63.9 | 63.1 | 60.1 | 79.4 | 58.4 | 47.0 | -- | 60.5 |
+| FROST | <ins>47.5</ins> | 61.8 | **66.7** | **67.2** | <ins>61.0</ins> | <ins>86.4</ins> | <ins>68.0</ins> | <ins>51.3</ins> | -- | <ins>63.7</ins> |
+| **Ours** | **52.2** | **67.3** | <ins>65.3</ins> | <ins>66.8</ins> | **61.9** | **91.8** | **68.4** | **54.3** | -- | **66.0** |
 
 ## Reproducing the table
 
@@ -44,16 +52,25 @@ GPUS="0 1 2 3" bash run_final.sh
 ```
 
 `run_final.sh` is the whole experiment: one job per (benchmark, shot count),
-16 in total, spread round-robin over `$GPUS`. Each job evaluates every fold of
-its benchmark with seed 1 (`results/k{1,5}/<benchmark>/results.json`, per-fold
-numbers included), and the script ends by printing the table above as
-`results/table.md`. Finished jobs are skipped on re-runs, so the script
-resumes. Budget several GPU-days in total; LVIS-92<sup>i</sup> alone is
-10 folds × 2300 episodes, and 5-shot LVIS peaks at ~19 GB of GPU memory.
-`MAX_EPISODES=50 bash run_final.sh isic` is a quick smoke test.
+17 in total (PerMIS at 1-shot only), spread round-robin over `$GPUS`. Each job
+evaluates every fold of its benchmark with seed 1
+(`results/k{1,5}/<benchmark>/results.json`, per-fold numbers included), and
+the script ends by printing our rows of the table above to `results/table.md`. Finished
+jobs are skipped on re-runs, so the script resumes. Budget several GPU-days in
+total; LVIS-92<sup>i</sup> alone is 10 folds × 2300 episodes, and 5-shot LVIS
+peaks at ~19 GB of GPU memory. `MAX_EPISODES=50 bash run_final.sh isic` is a
+quick smoke test.
 
-The baseline rows are transcribed from their papers and are not reproduced by
-this repository.
+Only our rows are computed by this repository. The FROST, INSID3 and FSSDINO
+rows are our runs of their public code under the INSID3 protocol; the Matcher
+and GF-SAM rows are taken from the INSID3 paper.
+
+**Seeds.** The seed fixes which episodes are sampled. The main table uses
+seed 1 with all folds and all episodes (PerMIS episodes are fixed, so the seed
+does not affect them). Ablations and hyper-parameter selection used a separate
+development setting: fold 0, 250 episodes per benchmark, seed 0. The ablation
+numbers in the paper (Table 3) and the supplement come from that setting, so
+`run_final.sh` will not reproduce them.
 
 ### Weights
 
@@ -77,6 +94,7 @@ $DATA_ROOT/
   ISIC/{ISIC2018_Task1-2_Training_Input, ISIC2018_Task1_Training_GroundTruth}
   LungSegmentation/{CXR_png, masks}
   SUIM/{images, masks}
+  PerMIRS/{0, 4, 5, ...}/{0.jpg, 1.jpg, 2.jpg, masks.npz.npy}
 ```
 
 ## Using the model
@@ -101,7 +119,7 @@ model/        the method: encoder.py (DINOv3), data.py, density.py (kernel densi
               threshold.py (adaptive cut), model.py (pipeline + fixed constants)
 datasets/     episodic benchmark loaders, vendored from INSID3
 eval.py       evaluates one benchmark at one shot count over all its folds
-run_final.sh  runs the 16 jobs and prints the table
+run_final.sh  runs the 17 jobs and prints the table
 ```
 
 ## Paper ↔ code
