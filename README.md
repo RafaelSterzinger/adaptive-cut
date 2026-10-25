@@ -21,9 +21,11 @@ into look-alike background; the adaptive cut stops at the object.*
 Foreground mIoU on nine benchmarks (INSID3 protocol; all folds, all episodes,
 seed 1), as in the paper's Table 2. FSSDINO, INSID3, FROST and ours use a
 frozen DINOv3 ViT-L/16; best of these four in **bold**, second
-<ins>underlined</ins>. The SAM-based Matcher and GF-SAM (marked †) are not
-ranked. PerMIS is 1-shot only (one support frame per episode), so the 5-shot
-Avg is over eight benchmarks.
+<ins>underlined</ins>. Matcher and GF-SAM (marked †) rely on SAM, i.e. are
+training-free variants that received mask supervision during pre-training;
+their results are taken over from INSID3 and not ranked. PerMIS is 1-shot
+only (one support frame per episode), so the 5-shot Avg is over eight
+benchmarks.
 
 | Method | LVIS-92<sup>i</sup> | COCO-20<sup>i</sup> | ISIC | SUIM | iSAID | X-Ray | PASCAL | PACO | PerMIS | Avg |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -55,11 +57,11 @@ GPUS="0 1 2 3" bash run_final.sh
 17 in total (PerMIS at 1-shot only), spread round-robin over `$GPUS`. Each job
 evaluates every fold of its benchmark with seed 1
 (`results/k{1,5}/<benchmark>/results.json`, per-fold numbers included), and
-the script ends by printing our rows of the table above to `results/table.md`. Finished
-jobs are skipped on re-runs, so the script resumes. Budget several GPU-days in
-total; LVIS-92<sup>i</sup> alone is 10 folds × 2300 episodes, and 5-shot LVIS
-peaks at ~19 GB of GPU memory. `MAX_EPISODES=50 bash run_final.sh isic` is a
-quick smoke test.
+the script ends by printing our rows of the table above to `results/table.md`.
+Finished jobs are skipped on re-runs, so the script resumes. Budget several
+GPU-days in total; LVIS-92<sup>i</sup> alone is 10 folds × 2300 episodes, and
+5-shot LVIS peaks at ~19 GB of GPU memory. `MAX_EPISODES=50 bash run_final.sh
+isic` is a quick smoke test.
 
 Only our rows are computed by this repository. The FROST, INSID3 and FSSDINO
 rows are our runs of their public code under the INSID3 protocol; the Matcher
@@ -69,8 +71,8 @@ and GF-SAM rows are taken from the INSID3 paper.
 seed 1 with all folds and all episodes (PerMIS episodes are fixed, so the seed
 does not affect them). Ablations and hyper-parameter selection used a separate
 development setting: fold 0, 250 episodes per benchmark, seed 0. The ablation
-numbers in the paper (Table 3) and the supplement come from that setting, so
-`run_final.sh` will not reproduce them.
+numbers in the paper (Tables 3 and 4, Section 5.2) and the supplement come from
+that setting, so `run_final.sh` will not reproduce them.
 
 ### Weights
 
@@ -119,19 +121,19 @@ model/        the method: encoder.py (DINOv3), data.py, density.py (kernel densi
               threshold.py (adaptive cut), model.py (pipeline + fixed constants)
 datasets/     episodic benchmark loaders, vendored from INSID3
 eval.py       evaluates one benchmark at one shot count over all its folds
-run_final.sh  runs the 17 jobs and prints the table
+run_final.sh  runs the 17 jobs and prints our rows of the table
 ```
 
 ## Paper ↔ code
 
 | paper | code |
 |---|---|
-| density ratio ℓ_σ | `ell` — `model/density.py`: `kde_log_posterior` |
-| correspondence term fwd (Eq. fwd) | `fwd` — `model/model.py`: `_correspondence_fields` |
-| score s(q) = ℓ_σ + λ·fwd | `score = ell + SCORE_LAMBDA * fwd` — `model/model.py`: `predict_mask` |
-| statistics window {s > 0} | `_post_cand` — `model/model.py`: `predict_mask` |
-| valley cut, shrinkage 1/(1 + a·π̂) | `model/threshold.py`: `windowed_valley_tau` (Glasbey valley, Otsu π̂) |
-| veto 𝒱 (reciprocal-kNN vote) | `model/model.py`: `_locate_candidates`, applied in `_finalize_mask` |
+| density ratio ℓ_σ (Eq. 2) | `ell` — `model/density.py`: `kde_log_posterior` |
+| correspondence term fwd (Eq. 4) | `fwd` — `model/model.py`: `_correspondence_fields` |
+| score s(q) = ℓ_σ + λ·fwd (Eq. 5) | `score = ell + SCORE_LAMBDA * fwd` — `model/model.py`: `predict_mask` |
+| statistics window R = {s > 0} (Eq. 6) | `_post_cand` — `model/model.py`: `predict_mask` |
+| valley cut, shrinkage 1/(1 + a·π̂) (Eq. 7) | `model/threshold.py`: `windowed_valley_tau` (Glasbey valley, Otsu π̂) |
+| veto 𝒱 (reciprocal-kNN vote, Eq. 8) | `model/model.py`: `_locate_candidates`, applied in `_finalize_mask` |
 | positional debias / whitening | `model/model.py`: `_debias_features`, `_shrinkage_whiten` |
 | σ = 0.05, T = 0.1, λ = 0.5, a = 1 | `SIGMA`, `ATT_T`, `SCORE_LAMBDA` in `model/model.py`; `PI_SHRINK_A` in `model/threshold.py` |
 
@@ -143,7 +145,7 @@ run_final.sh  runs the 17 jobs and prints the table
   and the kernel density ratio are FROST's.
 * The benchmark loaders in `datasets/` are vendored from **INSID3** (Claudia
   Cuttano, Gabriele Trivigno, Christoph Reich, Daniel Cremers, Carlo Masone,
-  Stefan Roth, *Training-Free In-Context Segmentation with DINOv3*, CVPR 2026;
+  Stefan Roth, *INSID3: Training-Free In-Context Segmentation with DINOv3*, CVPR 2026;
   [code](https://github.com/visinf/INSID3), Apache-2.0), whose evaluation
   protocol we follow.
 * The backbone is **DINOv3** (Meta AI), under its own license.
