@@ -27,22 +27,26 @@ their results are taken over from INSID3 and not ranked. PerMIS is 1-shot
 only (one support frame per episode), so the 5-shot Avg is over eight
 benchmarks.
 
-| Method | LVIS-92<sup>i</sup> | COCO-20<sup>i</sup> | ISIC | SUIM | iSAID | X-Ray | PASCAL | PACO | PerMIS | Avg |
+<div align="center">
+  
+| <sub>Method</sub> | <sub>LVIS-92<sup>i</sup></sub> | <sub>COCO-20<sup>i</sup></sub> | <sub>ISIC</sub> | <sub>SUIM</sub> | <sub>iSAID</sub> | <sub>X-Ray</sub> | <sub>PASCAL</sub> | <sub>PACO</sub> | <sub>PerMIS</sub> | <sub>Avg</sub> |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **1-shot** | | | | | | | | | | |
-| Matcher† | 33.0 | 52.7 | 38.6 | 44.1 | 33.3 | 70.8 | 42.9 | 34.7 | 63.8 | 46.0 |
-| GF-SAM† | 35.2 | 58.7 | 48.7 | 53.1 | 47.1 | 51.0 | 44.5 | 36.3 | 54.1 | 47.6 |
-| FSSDINO | 33.8 | 51.3 | 53.0 | 52.5 | 47.2 | 76.7 | 50.3 | 35.2 | 48.5 | 49.8 |
-| INSID3 | <ins>41.5</ins> | <ins>58.3</ins> | 54.0 | 53.4 | <ins>51.7</ins> | 78.6 | 49.1 | <ins>38.5</ins> | <ins>67.0</ins> | <ins>54.7</ins> |
-| FROST | 32.3 | 48.1 | <ins>54.4</ins> | <ins>58.1</ins> | 49.1 | <ins>84.8</ins> | <ins>54.3</ins> | 36.8 | 66.6 | 53.8 |
-| **Ours** | **42.3** | **58.7** | **58.4** | **58.4** | **52.1** | **90.5** | **56.6** | **42.3** | **67.8** | **58.6** |
-| **5-shot** | | | | | | | | | | |
-| Matcher† | 40.0 | 60.7 | 35.0 | 50.6 | 34.3 | 71.2 | 45.8 | 33.6 | -- | 46.4 |
-| GF-SAM† | 44.2 | 66.8 | 55.2 | 58.1 | 52.4 | 52.9 | 51.2 | 41.9 | -- | 52.8 |
-| FSSDINO | 43.4 | 60.6 | 63.6 | 62.8 | 58.5 | 78.6 | 60.8 | 45.8 | -- | 59.2 |
-| INSID3 | <ins>47.5</ins> | <ins>64.3</ins> | 63.9 | 63.1 | 60.1 | 79.4 | 58.4 | 47.0 | -- | 60.5 |
-| FROST | <ins>47.5</ins> | 61.8 | **66.7** | **67.2** | <ins>61.0</ins> | <ins>86.4</ins> | <ins>68.0</ins> | <ins>51.3</ins> | -- | <ins>63.7</ins> |
-| **Ours** | **52.2** | **67.3** | <ins>65.3</ins> | <ins>66.8</ins> | **61.9** | **91.8** | **68.4** | **54.3** | -- | **66.0** |
+| <sub>**1-shot**</sub> | | | | | | | | | | |
+| <sub>Matcher†</sub> | <sub>33.0</sub> | <sub>52.7</sub> | <sub>38.6</sub> | <sub>44.1</sub> | <sub>33.3</sub> | <sub>70.8</sub> | <sub>42.9</sub> | <sub>34.7</sub> | <sub>63.8</sub> | <sub>46.0</sub> |
+| <sub>GF-SAM†</sub> | <sub>35.2</sub> | <sub>58.7</sub> | <sub>48.7</sub> | <sub>53.1</sub> | <sub>47.1</sub> | <sub>51.0</sub> | <sub>44.5</sub> | <sub>36.3</sub> | <sub>54.1</sub> | <sub>47.6</sub> |
+| <sub>FSSDINO</sub> | <sub>33.8</sub> | <sub>51.3</sub> | <sub>53.0</sub> | <sub>52.5</sub> | <sub>47.2</sub> | <sub>76.7</sub> | <sub>50.3</sub> | <sub>35.2</sub> | <sub>48.5</sub> | <sub>49.8</sub> |
+| <sub>INSID3</sub> | <sub><ins>41.5</ins></sub> | <sub><ins>58.3</ins></sub> | <sub>54.0</sub> | <sub>53.4</sub> | <sub><ins>51.7</ins></sub> | <sub>78.6</sub> | <sub>49.1</sub> | <sub><ins>38.5</ins></sub> | <sub><ins>67.0</ins></sub> | <sub><ins>54.7</ins></sub> |
+| <sub>FROST</sub> | <sub>32.3</sub> | <sub>48.1</sub> | <sub><ins>54.4</ins></sub> | <sub><ins>58.1</ins></sub> | <sub>49.1</sub> | <sub><ins>84.8</ins></sub> | <sub><ins>54.3</ins></sub> | <sub>36.8</sub> | <sub>66.6</sub> | <sub>53.8</sub> |
+| <sub>**Ours**</sub> | <sub>**42.3**</sub> | <sub>**58.7**</sub> | <sub>**58.4**</sub> | <sub>**58.4**</sub> | <sub>**52.1**</sub> | <sub>**90.5**</sub> | <sub>**56.6**</sub> | <sub>**42.3**</sub> | <sub>**67.8**</sub> | <sub>**58.6**</sub> |
+| <sub>**5-shot**</sub> | | | | | | | | | | |
+| <sub>Matcher†</sub> | <sub>40.0</sub> | <sub>60.7</sub> | <sub>35.0</sub> | <sub>50.6</sub> | <sub>34.3</sub> | <sub>71.2</sub> | <sub>45.8</sub> | <sub>33.6</sub> | <sub>--</sub> | <sub>46.4</sub> |
+| <sub>GF-SAM†</sub> | <sub>44.2</sub> | <sub>66.8</sub> | <sub>55.2</sub> | <sub>58.1</sub> | <sub>52.4</sub> | <sub>52.9</sub> | <sub>51.2</sub> | <sub>41.9</sub> | <sub>--</sub> | <sub>52.8</sub> |
+| <sub>FSSDINO</sub> | <sub>43.4</sub> | <sub>60.6</sub> | <sub>63.6</sub> | <sub>62.8</sub> | <sub>58.5</sub> | <sub>78.6</sub> | <sub>60.8</sub> | <sub>45.8</sub> | <sub>--</sub> | <sub>59.2</sub> |
+| <sub>INSID3</sub> | <sub><ins>47.5</ins></sub> | <sub><ins>64.3</ins></sub> | <sub>63.9</sub> | <sub>63.1</sub> | <sub>60.1</sub> | <sub>79.4</sub> | <sub>58.4</sub> | <sub>47.0</sub> | <sub>--</sub> | <sub>60.5</sub> |
+| <sub>FROST</sub> | <sub><ins>47.5</ins></sub> | <sub>61.8</sub> | <sub>**66.7**</sub> | <sub>**67.2**</sub> | <sub><ins>61.0</ins></sub> | <sub><ins>86.4</ins></sub> | <sub><ins>68.0</ins></sub> | <sub><ins>51.3</ins></sub> | <sub>--</sub> | <sub><ins>63.7</ins></sub> |
+| <sub>**Ours**</sub> | <sub>**52.2**</sub> | <sub>**67.3**</sub> | <sub><ins>65.3</ins></sub> | <sub><ins>66.8</ins></sub> | <sub>**61.9**</sub> | <sub>**91.8**</sub> | <sub>**68.4**</sub> | <sub>**54.3**</sub> | <sub>--</sub> | <sub>**66.0**</sub> |
+  
+</div>
 
 ## Reproducing the table
 
